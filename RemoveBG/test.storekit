@@ -1,0 +1,77 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "96099366",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "remove_bg_pro_group",
+      "localizations" : [
+        {
+          "description" : "Unlimited access to Remove BG Pro features.",
+          "displayName" : "Remove BG Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "name" : "Remove BG Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "B4A7E919",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Annual access to all premium AI tools.",
+              "displayName" : "Remove BG Pro Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.dev.RemoveBG.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Remove BG Pro Annual",
+          "subscriptionGroupID" : "remove_bg_pro_group",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 5,
+    "minor" : 0
+  }
+}

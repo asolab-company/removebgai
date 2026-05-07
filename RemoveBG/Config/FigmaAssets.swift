@@ -1,0 +1,81 @@
+import Foundation
+
+enum FigmaAssets {
+    static let bgMain = "app_bg_main"
+
+    static let logo = "app_ic_logo"
+    static let add = "app_ic_add"
+    static let settings = "app_ic_settings"
+    static let vip = "app_btn_vip"
+
+    static let lock = "app_ic_lock"
+    static let bluer = "app_ic_bluer"
+    static let aiBg = "app_ic_aibg"
+    static let quality = "app_ic_quality"
+    static let magic = "app_ic_magic"
+
+    static let homeBlurBefore = "photo_home_blur_before"
+    static let homeBlurAfter = "photo_home_blur_after"
+    static let homeAIBefore = "photo_home_ai_before"
+    static let homeAIAfter = "photo_home_ai_after"
+    static let homeQualityBefore = "photo_home_quality_before"
+    static let homeQualityAfter = "photo_home_quality_after"
+    static let homeRemoveBefore = "photo_home_remove_before"
+    static let homeRemoveAfter = "photo_home_remove_after"
+
+    static let paywallClose = "app_ic_close"
+    static let paywallShield = "ic_shield"
+    static let paywallShieldTick = "ic_shield_tick"
+    static let paywallItem1 = "app_ic_paywall01"
+    static let paywallItem2 = "app_ic_paywall02"
+    static let paywallItem3 = "app_ic_paywall03"
+    static let paywallItem4 = "app_ic_paywall04"
+
+    static let onboarding1Before = "photo_onboarding_1_before"
+    static let onboarding1After = "photo_onboarding_1_after"
+    static let onboarding2Before = "photo_onboarding_2_before"
+    static let onboarding2After = "photo_onboarding_2_after"
+    static let onboarding3Before = "photo_onboarding_3_before"
+    static let onboarding3After = "photo_onboarding_3_after"
+    static let onboarding4Before = "photo_onboarding_4_before"
+    static let onboarding4After = "photo_onboarding_4_after"
+    static let onboarding1Background = "app_bg_onbording 1"
+    static let onboarding2Background = "app_bg_onbording 2"
+    static let onboarding3Background = "app_bg_onbording 3"
+    static let onboarding4Background = "app_bg_onbording 4"
+
+    static let set01 = "app_ic_set01"
+    static let set02 = "app_ic_set02"
+    static let set03 = "app_ic_set03"
+    static let set04 = "app_ic_set04"
+    static let set05 = "app_ic_set05"
+    static let set06 = "app_ic_set06"
+    static let arrow = "app_ic_arrow"
+    static let back = "app_btn_back"
+
+    static let send = "app_ic_send"
+    static let reset = "app_ic_back"
+    static let save = "app_ic_save"
+    static let change = "app_ic_change"
+    static let check = "app_ic_check"
+    static let loading = "app_ic_loading"
+
+    static let tool01 = "app_ic_tool01"
+    static let tool02 = "app_ic_tool02"
+    static let tool03 = "app_ic_tool03"
+    static let tool04 = "app_ic_tool04"
+    static let tool05 = "app_ic_tool05"
+
+    static let bgPattern01 = "app_ic_bg01"
+    static let bgPattern02 = "app_ic_bg02"
+    static let bgPattern03 = "app_ic_bg03"
+    static let frame1 = "app_ic_frame01"
+    static let frame2 = "app_ic_frame02"
+    static let brushThumb = "app_ic_brush01"
+
+    static let camera = "app_ic_camera"
+    static let gallery = "app_ic_gallery"
+
+    static let editorBefore = "photo_editor_before"
+    static let editorAfter = "photo_editor_after"
+}
