@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "app_bg_onbording 3.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
