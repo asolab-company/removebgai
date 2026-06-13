@@ -4,7 +4,7 @@ import StoreKit
 
 @MainActor
 final class StoreKitManager: ObservableObject {
-    static let annualProductID = "com.dev.RemoveBG.annual"
+    static let annualProductID = "annual"
     static let productIDs: Set<String> = [
         annualProductID
     ]
