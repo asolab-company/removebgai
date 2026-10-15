@@ -16,11 +16,11 @@ struct PrimaryButton: View {
                     Circle()
                         .fill(AppColors.white.opacity(0.14))
                         .frame(width: 24, height: 24)
-                        .overlay(
+                        .overlay {
                             Image(systemName: systemIcon)
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(AppColors.white)
-                        )
+                        }
                 }
                 Text(title)
                     .font(AppTypography.medium(16))
@@ -28,24 +28,12 @@ struct PrimaryButton: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 54)
-            .background(
+            .background {
                 RoundedRectangle(cornerRadius: 32)
                     .fill(AppColors.primaryBlue)
                     .shadow(color: AppColors.primaryBlue.opacity(0.38), radius: 4, y: 4)
-            )
+            }
         }
         .buttonStyle(.plain)
     }
-}
-
-#Preview("With Icon") {
-    PrimaryButton(title: "Upload Image", iconURL: FigmaAssets.add, action: {})
-        .padding()
-        .background(AppColors.background)
-}
-
-#Preview("Text Only") {
-    PrimaryButton(title: "Next", action: {})
-        .padding()
-        .background(AppColors.background)
 }

@@ -84,10 +84,10 @@ struct BeforeAfterPreview: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 32)
                     .fill(AppColors.glass)
-                    .overlay(
+                    .overlay {
                         RoundedRectangle(cornerRadius: 32)
                             .stroke(AppColors.white, lineWidth: 1)
-                    )
+                    }
                 RemoteAssetImage(url: centerIcon, contentMode: .fit)
                     .frame(width: isOnboarding ? 16 : 16, height: isOnboarding ? 16 : 16)
             }
@@ -101,47 +101,26 @@ struct BeforeAfterPreview: View {
         ZStack(alignment: .top) {
             RoundedRectangle(cornerRadius: cardRadius)
                 .fill(AppColors.white)
-                .overlay(
+                .overlay {
                     RemoteAssetImage(url: image, placeholderStyle: .photo)
                         .clipShape(RoundedRectangle(cornerRadius: cardRadius))
-                )
-                .overlay(
+                }
+                .overlay {
                     RoundedRectangle(cornerRadius: cardRadius)
                         .stroke(AppColors.borderWhite20, lineWidth: isOnboarding ? 1.5 : 1)
-                )
+                }
 
             UnevenRoundedRectangle(bottomLeadingRadius: 4, bottomTrailingRadius: 4)
                 .fill(AppColors.overlayDark)
                 .frame(width: captionSize.width, height: captionSize.height)
-                .overlay(
+                .overlay {
                     Text(caption)
                         .font(AppTypography.bold(captionFontSize))
                         .foregroundStyle(AppColors.white)
-                )
+                }
                 .offset(y: isOnboarding ? -2 : -1)
         }
         .frame(width: cardSize.width, height: cardSize.height)
         .rotationEffect(.degrees(rotation))
     }
-}
-
-#Preview("Card") {
-    BeforeAfterPreview(
-        beforeImage: FigmaAssets.homeBlurBefore,
-        afterImage: FigmaAssets.homeBlurAfter,
-        centerIcon: FigmaAssets.bluer
-    )
-    .padding()
-    .background(AppColors.background)
-}
-
-#Preview("Large") {
-    BeforeAfterPreview(
-        beforeImage: FigmaAssets.onboarding1Before,
-        afterImage: FigmaAssets.onboarding1After,
-        centerIcon: FigmaAssets.quality,
-        large: true
-    )
-    .padding()
-    .background(AppColors.background)
 }

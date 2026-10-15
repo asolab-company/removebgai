@@ -3,32 +3,37 @@ import SwiftUI
 struct OnboardingView: View {
     let onFinish: () -> Void
     @Environment(\.openURL) private var openURL
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var currentIndex = 0
+
+    init(onFinish: @escaping () -> Void) {
+        self.onFinish = onFinish
+    }
 
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             title: "Remove Background Instantly",
             subtitleLines: ["AI-powered background removal in seconds.", "No skills needed."],
             buttonTitle: "Next",
-            heroImage: FigmaAssets.onboarding1Background
+            demo: .removeBackground
         ),
         OnboardingPage(
             title: "Change Background Easily",
             subtitleLines: ["Replace your background", "with colors, gradients,", "or your own photos."],
             buttonTitle: "Next",
-            heroImage: FigmaAssets.onboarding2Background
+            demo: .changeBackground
         ),
         OnboardingPage(
             title: "Professional\nAI Editing Tools",
             subtitleLines: ["Blur backgrounds, apply", "filters, and enhance your", "images with AI."],
             buttonTitle: "Next",
-            heroImage: FigmaAssets.onboarding3Background
+            demo: .professionalEditing
         ),
         OnboardingPage(
             title: "Start Creating\nAmazing Photos",
             subtitleLines: ["Join millions of users creating", "stunning images", "with Remove BG."],
             buttonTitle: "Get Started",
-            heroImage: FigmaAssets.onboarding4Background
+            demo: .create
         )
     ]
 
@@ -40,9 +45,9 @@ struct OnboardingView: View {
                 AppColors.background.ignoresSafeArea()
 
                 TabView(selection: $currentIndex) {
-                    ForEach(Array(pages.enumerated()), id: \.offset) { index, page in
+                    ForEach(pages) { page in
                         pageView(page, layout: layout)
-                            .tag(index)
+                            .tag(page.demo.rawValue)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -59,11 +64,12 @@ struct OnboardingView: View {
 
             PrimaryButton(title: pages[currentIndex].buttonTitle) {
                 if currentIndex < pages.count - 1 {
-                    withAnimation(.easeInOut) { currentIndex += 1 }
+                    withAnimation(reduceMotion ? nil : .timingCurve(0.23, 1, 0.32, 1, duration: 0.25)) { currentIndex += 1 }
                 } else {
                     onFinish()
                 }
             }
+            .accessibilityIdentifier("onboarding.next")
             .padding(.horizontal, 18)
 
             termsText
@@ -100,9 +106,7 @@ struct OnboardingView: View {
 
     private func pageView(_ page: OnboardingPage, layout: OnboardingLayout) -> some View {
         VStack(spacing: 0) {
-            Image(page.heroImage)
-                .resizable()
-                .scaledToFit()
+            OnboardingAnimatedHero(demo: page.demo, isActive: currentIndex == page.demo.rawValue)
                 .frame(width: layout.heroSize.width, height: layout.heroSize.height)
                 .padding(.top, layout.heroTop)
 
@@ -121,7 +125,7 @@ struct OnboardingView: View {
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-                .frame(width: 332)
+                .frame(maxWidth: min(layout.size.width - 36, 332))
                 .frame(minHeight: 76, alignment: .top)
                 .padding(.top, layout.titleTop)
 
@@ -149,8 +153,8 @@ private struct OnboardingLayout {
 
     var heroSize: CGSize {
         isCompactHeight
-            ? CGSize(width: 300, height: 300)
-            : CGSize(width: 393, height: 390)
+            ? CGSize(width: min(size.width - 24, 300), height: min(300, size.height * 0.46))
+            : CGSize(width: min(size.width - 24, 393), height: 350)
     }
 
     var heroTop: CGFloat {
@@ -158,7 +162,7 @@ private struct OnboardingLayout {
     }
 
     var titleTop: CGFloat {
-        isCompactHeight ? 24 : 32
+        isCompactHeight ? 16 : 24
     }
 
     var subtitleTop: CGFloat {
@@ -176,8 +180,4 @@ private struct OnboardingLayout {
     var termsBottom: CGFloat {
         isCompactHeight ? 20 : 30
     }
-}
-
-#Preview {
-    OnboardingView(onFinish: {})
 }

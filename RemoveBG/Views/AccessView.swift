@@ -43,7 +43,7 @@ struct AccessView: View {
             .padding(.bottom, 83)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.background.ignoresSafeArea())
+        .background { AppColors.background.ignoresSafeArea() }
         .navigationBarBackButtonHidden(true)
     }
 
@@ -71,8 +71,4 @@ struct AccessView: View {
         UIApplication.shared.open(url)
         #endif
     }
-}
-
-#Preview {
-    AccessView(onBack: {})
 }

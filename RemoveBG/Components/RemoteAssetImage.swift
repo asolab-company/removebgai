@@ -226,10 +226,3 @@ private struct VipMark: View {
         }
     }
 }
-
-#Preview {
-    RemoteAssetImage(url: FigmaAssets.logo, contentMode: .fit)
-        .frame(width: 64, height: 64)
-        .padding()
-        .background(AppColors.background)
-}

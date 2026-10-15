@@ -1,7 +1,5 @@
 import CoreGraphics
 import Foundation
-#if canImport(OSLog)
-#endif
 #if canImport(UIKit)
 import UIKit
 #endif

@@ -9,9 +9,9 @@ struct ZoomablePreviewModifier: ViewModifier {
             .scaleEffect(scale)
             .animation(.easeOut(duration: 0.16), value: scale)
             .simultaneousGesture(
-                MagnificationGesture()
+                MagnifyGesture()
                     .onChanged { value in
-                        scale = min(max(lastScale * value, 1), 4)
+                        scale = min(max(lastScale * value.magnification, 1), 4)
                     }
                     .onEnded { _ in
                         if scale < 1.04 {

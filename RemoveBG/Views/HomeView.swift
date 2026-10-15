@@ -66,7 +66,7 @@ struct HomeView: View {
     }
 
     private var content: some View {
-        ScrollView(showsIndicators: false) {
+        ScrollView {
             VStack(spacing: 0) {
                 topBar
                     .padding(.horizontal, 18)
@@ -93,7 +93,8 @@ struct HomeView: View {
                 .padding(.bottom, 24)
             }
         }
-        .background(AppColors.background.ignoresSafeArea())
+        .scrollIndicators(.hidden)
+        .background { AppColors.background.ignoresSafeArea() }
     }
 
     private var topBar: some View {
@@ -137,10 +138,10 @@ struct HomeView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 16)
-        .background(
+        .background {
             RoundedRectangle(cornerRadius: 32)
                 .fill(AppColors.card)
-        )
+        }
     }
 
     private func toolCard(_ card: ToolCardModel) -> some View {
@@ -174,10 +175,10 @@ struct HomeView: View {
             .padding(.horizontal, 18)
             .padding(.top, 24)
             .padding(.bottom, 26)
-            .background(
+            .background {
                 RoundedRectangle(cornerRadius: 32)
                     .fill(AppColors.card)
-            )
+            }
         }
         .buttonStyle(.plain)
     }
@@ -193,13 +194,4 @@ struct HomeView: View {
             isImageSelectionPresented = true
         }
     }
-}
-
-#Preview {
-    HomeView(
-        onOpenPaywall: {},
-        onOpenSettings: {},
-        onOpenEditor: { _, _ in }
-    )
-    .environmentObject(StoreKitManager())
 }

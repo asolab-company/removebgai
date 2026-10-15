@@ -51,7 +51,7 @@ struct SuccessSavedView: View {
             .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.background.ignoresSafeArea())
+        .background { AppColors.background.ignoresSafeArea() }
         .navigationBarBackButtonHidden(true)
     }
 
@@ -128,12 +128,4 @@ private struct SuccessCheckerboard: View {
             }
         }
     }
-}
-
-#Preview {
-    SuccessSavedView(
-        image: UIImage(systemName: "photo") ?? UIImage(),
-        onProcessAnotherImage: {},
-        onGoToMenu: {}
-    )
 }

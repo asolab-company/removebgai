@@ -116,10 +116,10 @@ struct ImageSelectionOverlay: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 374)
-        .background(
+        .background {
             UnevenRoundedRectangle(topLeadingRadius: 32, topTrailingRadius: 32)
                 .fill(AppColors.card)
-        )
+        }
         .ignoresSafeArea(edges: .bottom)
         .offset(y: dragOffset)
         .gesture(
@@ -369,10 +369,3 @@ private struct GalleryImagePicker: UIViewControllerRepresentable {
     }
 }
 #endif
-
-#Preview {
-    ImageSelectionOverlay(
-        onCancel: {},
-        onImageSelected: { _ in }
-    )
-}

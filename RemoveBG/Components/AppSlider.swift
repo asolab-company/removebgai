@@ -57,17 +57,16 @@ struct AppSlider: View {
                         )
                     )
                     .frame(width: thumbSize, height: thumbSize)
-                    .overlay(
+                    .overlay {
                         Circle()
                             .stroke(AppColors.white.opacity(0.9), lineWidth: 1)
-                    )
-                    .overlay(
+                    }
+                    .overlay(alignment: .topLeading) {
                         Circle()
                             .fill(AppColors.white.opacity(0.48))
                             .frame(width: 7, height: 7)
-                            .offset(x: -4, y: -4),
-                        alignment: .topLeading
-                    )
+                            .offset(x: -4, y: -4)
+                    }
                     .shadow(color: AppColors.black.opacity(0.16), radius: 7, y: 4)
                     .shadow(color: AppColors.black.opacity(0.06), radius: 1, y: 1)
                     .offset(x: thumbX)

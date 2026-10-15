@@ -32,20 +32,9 @@ struct FeatureRow: View {
         }
         .padding(.horizontal, 16)
         .frame(height: 66)
-        .background(
+        .background {
             RoundedRectangle(cornerRadius: 32)
                 .fill(AppColors.card)
-        )
+        }
     }
-}
-
-#Preview {
-    FeatureRow(
-        iconURL: FigmaAssets.paywallItem1,
-        title: "AI Background Removal",
-        subtitle: "Instantly cut out subjects with high-precision AI.",
-        trailingText: nil
-    )
-    .padding()
-    .background(AppColors.background)
 }

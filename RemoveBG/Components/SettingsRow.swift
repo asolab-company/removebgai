@@ -21,18 +21,9 @@ struct SettingsRow: View {
         .padding(.leading, 16)
         .padding(.trailing, 4)
         .frame(height: 66)
-        .background(
+        .background {
             RoundedRectangle(cornerRadius: 32)
                 .fill(AppColors.card)
-        )
+        }
     }
-}
-
-#Preview {
-    SettingsRow(
-        iconURL: FigmaAssets.set06,
-        title: "Privacy"
-    )
-    .padding()
-    .background(AppColors.background)
 }

@@ -10,44 +10,20 @@ struct PaywallView: View {
         GeometryReader { proxy in
             let layout = PaywallLayout(size: proxy.size)
 
-            ScrollView(showsIndicators: false) {
+            ScrollView {
                 VStack(spacing: 0) {
-                    HStack {
-                        Button(action: closeOnce) {
-                            RemoteAssetImage(url: FigmaAssets.paywallClose, contentMode: .fit)
-                                .frame(width: 14, height: 14)
-                                .frame(width: 24, height: 24)
+                    PaywallDemoCarousel(heroSize: layout.heroSize)
+                        .frame(maxWidth: .infinity)
+                        .overlay(alignment: .topLeading) {
+                            Button(action: closeOnce) {
+                                RemoteAssetImage(url: FigmaAssets.paywallClose, contentMode: .fit)
+                                    .frame(width: 14, height: 14)
+                                    .frame(width: 44, height: 44)
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.leading, 8)
                         }
-                        .buttonStyle(.plain)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 18)
-                    .padding(.top, layout.closeTop)
-
-                    if layout.showsLogo {
-                        RemoteAssetImage(url: FigmaAssets.logo, contentMode: .fit)
-                            .frame(width: 58, height: 58)
-                            .padding(.top, 12)
-                    }
-
-                    VStack(spacing: 0) {
-                        Group {
-                            Text("Go ").font(AppTypography.semibold(layout.titleSize))
-                            + Text("Pro").font(AppTypography.heavy(layout.titleSize))
-                            + Text(".").font(AppTypography.semibold(layout.titleSize))
-                        }
-                        Text("Create Without Limits.")
-                            .font(AppTypography.semibold(layout.titleSize))
-                    }
-                    .foregroundStyle(AppColors.primaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, layout.titleTop)
-
-                    Text("AI-powered background removal in seconds.\nNo skills needed.")
-                        .font(AppTypography.regular(16))
-                        .foregroundStyle(AppColors.primaryText)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, layout.subtitleTop)
+                        .padding(.top, layout.closeTop)
 
                     Text("Premium Features")
                         .font(AppTypography.semibold(16))
@@ -78,12 +54,7 @@ struct PaywallView: View {
                             )
                         }
 
-                        FeatureRow(
-                            iconURL: FigmaAssets.paywallItem4,
-                            title: "Annual Access",
-                            subtitle: store.annualSubtitleText,
-                            trailingText: store.monthlyPriceText
-                        )
+                        subscriptionRow
                         .padding(.top, layout.priceTop)
                     }
                     .padding(.horizontal, 18)
@@ -104,14 +75,14 @@ struct PaywallView: View {
 
                     PrimaryButton(title: "Next") {
                         Task {
-                            let didPurchase = await store.purchaseAnnual()
+                            let didPurchase = await store.purchaseSubscription()
                             if didPurchase || store.isPremium {
                                 closeOnce()
                             }
                         }
                     }
-                    .disabled(store.isPurchasing)
-                    .opacity(store.isPurchasing ? 0.72 : 1)
+                    .disabled(!store.canPurchase)
+                    .opacity(store.canPurchase ? 1 : 0.55)
                     .padding(.horizontal, 18)
                     .padding(.top, 16)
 
@@ -120,7 +91,8 @@ struct PaywallView: View {
                         .padding(.bottom, 24)
                 }
             }
-            .background(AppColors.background.ignoresSafeArea())
+            .scrollIndicators(.hidden)
+            .background { AppColors.background.ignoresSafeArea() }
         }
         .navigationBarBackButtonHidden(true)
         .task {
@@ -132,6 +104,39 @@ struct PaywallView: View {
             }
         } message: {
             Text(store.errorMessage ?? "")
+        }
+    }
+
+    @ViewBuilder
+    private var subscriptionRow: some View {
+        if let offer = store.subscriptionOffer {
+            FeatureRow(
+                iconURL: FigmaAssets.paywallItem4,
+                title: offer.title,
+                subtitle: offer.description,
+                trailingText: offer.billingText
+            )
+            .accessibilityIdentifier("paywall.subscription.offer")
+        } else {
+            HStack(spacing: 12) {
+                if store.isLoadingProducts || !store.hasLoadedProducts {
+                    ProgressView()
+                    Text("Loading subscription…")
+                } else {
+                    Text(store.productLoadingError ?? "Subscription unavailable")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button("Try again") {
+                        Task { await store.loadProducts() }
+                    }
+                    .foregroundStyle(AppColors.primaryBlue)
+                }
+            }
+            .font(AppTypography.regular(14))
+            .foregroundStyle(AppColors.secondaryText)
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, minHeight: 66)
+            .background(AppColors.card, in: RoundedRectangle(cornerRadius: 32))
+            .accessibilityIdentifier("paywall.subscription.unavailable")
         }
     }
 
@@ -186,24 +191,12 @@ private struct PaywallLayout {
         size.height <= 700
     }
 
-    var showsLogo: Bool {
-        !isCompactHeight
-    }
-
-    var titleSize: CGFloat {
-        isCompactHeight ? 26 : 32
+    var heroSize: CGFloat {
+        min(size.width - 36, isCompactHeight ? 210 : 250)
     }
 
     var closeTop: CGFloat {
         isCompactHeight ? 14 : 18
-    }
-
-    var titleTop: CGFloat {
-        isCompactHeight ? 10 : 16
-    }
-
-    var subtitleTop: CGFloat {
-        isCompactHeight ? 12 : 16
     }
 
     var featuresTitleTop: CGFloat {
@@ -213,9 +206,4 @@ private struct PaywallLayout {
     var priceTop: CGFloat {
         isCompactHeight ? 18 : 24
     }
-}
-
-#Preview {
-    PaywallView(onClose: {})
-        .environmentObject(StoreKitManager())
 }

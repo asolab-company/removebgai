@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseCore
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -6,6 +7,7 @@ import UIKit
 @main
 struct RemoveBGApp: App {
     init() {
+        FirebaseApp.configure()
         #if canImport(UIKit)
         UIView.appearance().overrideUserInterfaceStyle = .light
         #endif

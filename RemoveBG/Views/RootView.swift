@@ -85,6 +85,8 @@ struct RootView: View {
         .task {
             await store.loadProducts()
             presentLaunchPaywallIfNeeded()
+        }
+        .task {
             await OpenAIAPIKeyManager.shared.refreshKeyIfNeeded()
         }
     }
@@ -123,8 +125,4 @@ struct RootView: View {
         hasPresentedLaunchPaywall = true
         path.append(.paywall)
     }
-}
-
-#Preview {
-    RootView()
 }

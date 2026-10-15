@@ -11,7 +11,7 @@ struct SettingsView: View {
     @State private var settingsMessage: SettingsMessage?
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        ScrollView {
             VStack(spacing: 0) {
                 HStack(spacing: 8) {
                     Button(action: onBack) {
@@ -40,21 +40,17 @@ struct SettingsView: View {
                                 .scaledToFit()
                                 .foregroundStyle(AppColors.white)
                                 .frame(width: 32, height: 32)
-                            (
-                                Text("Go to ")
-                                    .font(AppTypography.medium(16))
-                                + Text("PRO")
-                                    .font(AppTypography.bold(16))
-                            )
-                            .foregroundStyle(AppColors.white)
+                            Text("Go to \(Text("PRO").font(AppTypography.bold(16)))")
+                                .font(AppTypography.medium(16))
+                                .foregroundStyle(AppColors.white)
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 54)
-                        .background(
+                        .background {
                             RoundedRectangle(cornerRadius: 32)
                                 .fill(AppColors.primaryBlue)
                                 .shadow(color: AppColors.primaryBlue.opacity(0.38), radius: 4, y: 4)
-                        )
+                        }
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, 18)
@@ -131,7 +127,8 @@ struct SettingsView: View {
                 .padding(.bottom, 24)
             }
         }
-        .background(AppColors.background.ignoresSafeArea())
+        .scrollIndicators(.hidden)
+        .background { AppColors.background.ignoresSafeArea() }
         .navigationBarBackButtonHidden(true)
         .confirmationDialog(
             "Delete Data?",
@@ -145,12 +142,12 @@ struct SettingsView: View {
         } message: {
             Text("This removes local files, cache, and app settings from this device.")
         }
-        .alert(item: $settingsMessage) { message in
-            Alert(
-                title: Text(message.title),
-                message: Text(message.body),
-                dismissButton: .default(Text("OK"))
-            )
+        .alert(settingsMessage?.title ?? "", isPresented: settingsAlertBinding, presenting: settingsMessage) { _ in
+            Button("OK", role: .cancel) {
+                settingsMessage = nil
+            }
+        } message: { message in
+            Text(message.body)
         }
         .alert("StoreKit", isPresented: errorAlertBinding) {
             Button("OK", role: .cancel) {
@@ -159,6 +156,17 @@ struct SettingsView: View {
         } message: {
             Text(store.errorMessage ?? "")
         }
+    }
+
+    private var settingsAlertBinding: Binding<Bool> {
+        Binding(
+            get: { settingsMessage != nil },
+            set: { isPresented in
+                if !isPresented {
+                    settingsMessage = nil
+                }
+            }
+        )
     }
 
     private var errorAlertBinding: Binding<Bool> {
@@ -188,16 +196,7 @@ struct SettingsView: View {
     }
 }
 
-private struct SettingsMessage: Identifiable {
-    let id = UUID()
+private struct SettingsMessage {
     let title: String
     let body: String
-}
-
-#Preview {
-    SettingsView(
-        onBack: {},
-        onOpenPaywall: {}
-    )
-    .environmentObject(StoreKitManager())
 }

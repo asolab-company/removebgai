@@ -372,14 +372,6 @@ private struct DepthMaskStats {
         }
     }
 
-    nonisolated func debugSummary(maskBytes: [UInt8]) -> String {
-        let parameters = maskParameters()
-        let depthAvg = values.isEmpty ? 0 : values.reduce(0, +) / Float(values.count)
-        let coverage = coverageSummary(maskBytes: maskBytes)
-
-        return "depthMin=\(parameters.depthMin) depthMax=\(parameters.depthMax) depthRange=\(parameters.depthRange) depthAvg=\(depthAvg) centerAvg=\(parameters.centerAverage) borderAvg=\(parameters.borderAverage) nearIsBright=\(parameters.nearIsBright) threshold=\(parameters.threshold) feather=\(parameters.feather) coverage=\(coverage.visible) strongCoverage=\(coverage.strong)"
-    }
-
     nonisolated private func maskParameters() -> DepthMaskParameters {
         let depthMin = values.min() ?? 0
         let depthMax = values.max() ?? 1

@@ -2,21 +2,38 @@ import Combine
 import Foundation
 import StoreKit
 
+struct SubscriptionOffer {
+    let title: String
+    let description: String
+    let billingText: String
+
+    init(product: Product) {
+        title = product.displayName
+        description = product.description
+        if let period = product.subscription?.subscriptionPeriod {
+            billingText = "\(product.displayPrice)\n/ \(period.formatted(product.subscriptionPeriodFormatStyle))"
+        } else {
+            billingText = product.displayPrice
+        }
+    }
+}
+
 @MainActor
 final class StoreKitManager: ObservableObject {
-    static let annualProductID = "annual"
-    static let productIDs: Set<String> = [
-        annualProductID
-    ]
+    static let subscriptionProductID = "annual"
+    static let productIDs: Set<String> = [subscriptionProductID]
 
-    @Published private(set) var annualProduct: Product?
+    @Published private(set) var subscriptionProduct: Product?
     @Published private(set) var products: [Product] = []
     @Published private(set) var isPremium = false
     @Published private(set) var isPurchasing = false
     @Published private(set) var hasLoadedProducts = false
+    @Published private(set) var isLoadingProducts = false
+    @Published private(set) var productLoadingError: String?
     @Published var errorMessage: String?
 
     private var transactionUpdatesTask: Task<Void, Never>?
+    private var productLoadTask: Task<Void, Never>?
 
     init() {
         transactionUpdatesTask = listenForTransactions()
@@ -24,78 +41,67 @@ final class StoreKitManager: ObservableObject {
 
     deinit {
         transactionUpdatesTask?.cancel()
+        productLoadTask?.cancel()
     }
 
-    var annualPriceText: String {
-        annualProduct?.displayPrice ?? "$29.99"
+    var subscriptionOffer: SubscriptionOffer? {
+        subscriptionProduct.map(SubscriptionOffer.init(product:))
     }
 
-    var annualSubtitleText: String {
-        "\(annualPriceText) / year"
-    }
-
-    var monthlyPriceText: String {
-        guard let annualProduct else {
-            return "Only $2.49\nper month"
-        }
-
-        let monthlyPrice = annualProduct.price / Decimal(12)
-        let formattedPrice = monthlyPrice.formatted(annualProduct.priceFormatStyle)
-        return "Only \(formattedPrice)\nper month"
-    }
+    var canPurchase: Bool { subscriptionProduct != nil && !isPurchasing }
 
     func loadProducts() async {
-        do {
-            let products = try await Product.products(for: Self.productIDs)
-            self.products = products.sorted { $0.price < $1.price }
-            annualProduct = products.first { $0.id == Self.annualProductID }
-            if annualProduct == nil {
-                errorMessage = "Annual StoreKit product is not available. Check the StoreKit configuration in the active scheme."
-            }
-            await updatePurchasedProducts()
-            hasLoadedProducts = true
-        } catch {
-            errorMessage = error.localizedDescription
-            await updatePurchasedProducts()
+        if let productLoadTask {
+            await productLoadTask.value
+            return
+        }
+        guard subscriptionProduct == nil else { return }
+
+        let task = Task { await fetchProducts() }
+        productLoadTask = task
+        defer { productLoadTask = nil }
+        await task.value
+    }
+
+    private func fetchProducts() async {
+        isLoadingProducts = true
+        productLoadingError = nil
+        defer {
+            isLoadingProducts = false
             hasLoadedProducts = true
         }
+        do {
+            let loadedProducts = try await Product.products(for: Self.productIDs)
+            products = loadedProducts.sorted { $0.price < $1.price }
+            subscriptionProduct = products.first {
+                $0.id == Self.subscriptionProductID && $0.type == .autoRenewable
+            }
+            if subscriptionProduct == nil {
+                productLoadingError = "Subscriptions are currently unavailable. Please try again."
+            }
+        } catch {
+            productLoadingError = "Could not load the subscription. Please try again."
+        }
+        await updatePurchasedProducts()
     }
 
     @discardableResult
-    func purchaseAnnual() async -> Bool {
-        guard !isPurchasing else {
-            return false
-        }
-
+    func purchaseSubscription() async -> Bool {
+        guard !isPurchasing else { return false }
         isPurchasing = true
         defer { isPurchasing = false }
-        guard let annualProduct else {
-            await loadProducts()
-            guard self.annualProduct != nil else {
-                errorMessage = "Annual StoreKit product is not loaded. Check that test.storekit is selected for the active run scheme."
-                return false
-            }
-            return await purchaseLoadedAnnual()
-        }
 
-        return await purchase(annualProduct)
-    }
+        if subscriptionProduct == nil { await loadProducts() }
+        guard let subscriptionProduct else { return false }
 
-    private func purchaseLoadedAnnual() async -> Bool {
-        guard let annualProduct else { return false }
-        return await purchase(annualProduct)
-    }
-
-    private func purchase(_ annualProduct: Product) async -> Bool {
         do {
-            let result = try await annualProduct.purchase()
-
+            let result = try await subscriptionProduct.purchase()
             switch result {
             case .success(let verification):
                 let transaction = try checkVerified(verification)
-                isPremium = true
                 await transaction.finish()
-                return true
+                await updatePurchasedProducts()
+                return isPremium
             case .userCancelled, .pending:
                 return false
             @unknown default:
@@ -118,24 +124,19 @@ final class StoreKitManager: ObservableObject {
 
     func updatePurchasedProducts() async {
         var hasPremiumAccess = false
-
         for await result in Transaction.currentEntitlements {
             guard let transaction = try? checkVerified(result) else { continue }
-
             if Self.productIDs.contains(transaction.productID) {
                 hasPremiumAccess = true
             }
         }
-
         isPremium = hasPremiumAccess
     }
 
     private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         switch result {
-        case .unverified:
-            throw PurchaseError.failedVerification
-        case .verified(let safe):
-            return safe
+        case .unverified: throw PurchaseError.failedVerification
+        case .verified(let safe): return safe
         }
     }
 
@@ -149,20 +150,16 @@ final class StoreKitManager: ObservableObject {
     }
 
     private func handleTransactionUpdate(_ result: VerificationResult<Transaction>) async {
-        do {
-            let transaction = try checkVerified(result)
-            if Self.productIDs.contains(transaction.productID) {
-                isPremium = true
-            }
-            await transaction.finish()
-        } catch {}
+        guard let transaction = try? checkVerified(result) else { return }
+        await transaction.finish()
+        if Self.productIDs.contains(transaction.productID) {
+            await updatePurchasedProducts()
+        }
     }
 }
 
 enum PurchaseError: LocalizedError {
     case failedVerification
 
-    var errorDescription: String? {
-        "StoreKit transaction verification failed."
-    }
+    var errorDescription: String? { "StoreKit transaction verification failed." }
 }

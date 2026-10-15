@@ -76,7 +76,7 @@ struct UploadCropView: View {
                 .padding(.bottom, layout.bottomPadding)
             }
             .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
-            .background(AppColors.background.ignoresSafeArea())
+            .background { AppColors.background.ignoresSafeArea() }
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -186,11 +186,11 @@ struct UploadResultView: View {
                             Circle()
                                 .fill(AppColors.tertiaryText.opacity(0.14))
                                 .frame(width: 24, height: 24)
-                                .overlay(
+                                .overlay {
                                     Image(systemName: "arrow.triangle.2.circlepath")
                                         .font(.system(size: 12, weight: .semibold))
                                         .foregroundStyle(AppColors.tertiaryText)
-                                )
+                                }
 
                             Text("Process Another Image")
                                 .font(AppTypography.medium(16))
@@ -205,7 +205,7 @@ struct UploadResultView: View {
                     .padding(.bottom, layout.bottomPadding)
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
-                .background(AppColors.background.ignoresSafeArea())
+                .background { AppColors.background.ignoresSafeArea() }
             }
             .blur(radius: isImageSelectionPresented ? 12 : 0)
             .disabled(isImageSelectionPresented || isSuccessPresented)
@@ -392,12 +392,12 @@ private struct InteractiveCropPreview: View {
                 }
         )
         .simultaneousGesture(
-            MagnificationGesture()
+            MagnifyGesture()
                 .onChanged { value in
                     guard preset != .original else {
                         return
                     }
-                    scale = min(max(lastScale * value, 1), 5)
+                    scale = min(max(lastScale * value.magnification, 1), 5)
                     offset = offset.clamped(for: image.size, stageSize: stageSize, cropRect: cropRect, scale: scale)
                 }
                 .onEnded { _ in
@@ -491,10 +491,10 @@ private struct CropResizeHandles: View {
                 Circle()
                     .fill(AppColors.white)
                     .frame(width: 22, height: 22)
-                    .overlay(
+                    .overlay {
                         Circle()
                             .stroke(AppColors.primaryBlue, lineWidth: 2)
-                    )
+                    }
                     .shadow(color: AppColors.black.opacity(0.18), radius: 5, y: 2)
                     .position(handle.position(in: activeRect))
                     .gesture(
@@ -674,11 +674,11 @@ private struct UploadResultPreview: View {
                 .foregroundStyle(AppColors.white)
                 .padding(.horizontal, 12)
                 .frame(height: 24)
-                .background(
+                .background {
                     Capsule()
                         .fill(Color(red: 54 / 255, green: 54 / 255, blue: 54 / 255).opacity(0.6))
                         .blur(radius: 0.1)
-                )
+                }
                 .padding(.trailing, 16)
                 .padding(.bottom, 16)
         }
@@ -745,11 +745,11 @@ private struct UploadOptionButton: View {
                     Circle()
                         .fill(AppColors.primaryText.opacity(0.86))
                         .frame(width: 18, height: 18)
-                        .overlay(
+                        .overlay {
                             Image(systemName: "lock.fill")
                                 .font(.system(size: 8, weight: .bold))
                                 .foregroundStyle(AppColors.white)
-                        )
+                        }
                         .offset(x: 15, y: -15)
                 }
 
@@ -785,11 +785,11 @@ private struct UploadPrimaryActionButton: View {
                 Circle()
                     .fill(AppColors.white.opacity(0.14))
                     .frame(width: 24, height: 24)
-                    .overlay(
+                    .overlay {
                         Image(systemName: systemIcon)
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundStyle(AppColors.white)
-                    )
+                    }
 
                 Text(title)
                     .font(AppTypography.medium(16))
@@ -797,11 +797,11 @@ private struct UploadPrimaryActionButton: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 54)
-            .background(
+            .background {
                 RoundedRectangle(cornerRadius: 32, style: .continuous)
                     .fill(AppColors.primaryBlue)
                     .shadow(color: AppColors.primaryBlue.opacity(0.38), radius: 4, y: 4)
-            )
+            }
         }
         .buttonStyle(.plain)
     }
@@ -1177,20 +1177,4 @@ private extension UIImage {
             )
         }
     }
-}
-
-#Preview("Crop") {
-    UploadCropView(image: UIImage(systemName: "photo") ?? UIImage(), onBack: {}, onContinue: { _ in })
-}
-
-#Preview("Result") {
-    UploadResultView(
-        originalImage: UIImage(systemName: "photo") ?? UIImage(),
-        resultImage: UIImage(systemName: "photo") ?? UIImage(),
-        onBack: {},
-        onOpenPaywall: {},
-        onOpenEditor: { _, _ in },
-        onProcessAnotherImage: { _ in }
-    )
-    .environmentObject(StoreKitManager())
 }

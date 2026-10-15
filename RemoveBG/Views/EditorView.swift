@@ -160,7 +160,7 @@ struct EditorView: View {
         }
         .animation(.easeInOut(duration: 0.22), value: isProcessingObjectRemoval)
         .animation(.easeInOut(duration: 0.22), value: isProcessingAIBackground)
-        .background(AppColors.background.ignoresSafeArea())
+        .background { AppColors.background.ignoresSafeArea() }
         .navigationBarBackButtonHidden(true)
         .photosPicker(
             isPresented: $isBackgroundPhotoPickerPresented,
@@ -252,11 +252,11 @@ struct EditorView: View {
                         Circle()
                             .fill(AppColors.tertiaryText.opacity(0.14))
                             .frame(width: 24, height: 24)
-                            .overlay(
+                            .overlay {
                                 Image(systemName: "arrow.triangle.2.circlepath")
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundStyle(AppColors.tertiaryText)
-                            )
+                            }
 
                         Text("Process Another Image")
                             .font(AppTypography.medium(16))
@@ -312,11 +312,11 @@ struct EditorView: View {
                         Circle()
                             .fill(AppColors.tertiaryText.opacity(0.14))
                             .frame(width: 24, height: 24)
-                            .overlay(
+                            .overlay {
                                 Image(systemName: "arrow.triangle.2.circlepath")
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundStyle(AppColors.tertiaryText)
-                            )
+                            }
 
                         Text("Process Another Image")
                             .font(AppTypography.medium(16))
@@ -516,10 +516,10 @@ struct EditorView: View {
             .foregroundStyle(AppColors.white)
             .padding(.horizontal, 12)
             .frame(height: 24)
-            .background(
+            .background {
                 Capsule()
                     .fill(Color(red: 54 / 255, green: 54 / 255, blue: 54 / 255).opacity(0.6))
-            )
+            }
             .contentShape(Capsule())
             .gesture(compareDragGesture)
     }
@@ -681,11 +681,11 @@ struct EditorView: View {
         case .color:
             Circle()
                 .fill(Color(hex: selectedAIBackgroundColorHex).opacity(selectedAIBackgroundColorOpacity))
-                .overlay(
+                .overlay {
                     Image(systemName: "paintpalette.fill")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(AppColors.white.opacity(0.9))
-                )
+                }
         }
     }
 
@@ -700,7 +700,7 @@ struct EditorView: View {
                 Circle()
                     .fill(AppColors.white.opacity(0.18))
                     .frame(width: 24, height: 24)
-                    .overlay(
+                    .overlay {
                         Group {
                             if isLoading {
                                 ProgressView()
@@ -712,7 +712,7 @@ struct EditorView: View {
                                     .foregroundStyle(AppColors.white)
                             }
                         }
-                    )
+                    }
 
                 Text(isLoading ? "Processing" : title)
                     .font(AppTypography.medium(16))
@@ -720,11 +720,11 @@ struct EditorView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 54)
-            .background(
+            .background {
                 RoundedRectangle(cornerRadius: 32)
                     .fill(AppColors.primaryBlue)
                     .shadow(color: AppColors.primaryBlue.opacity(0.38), radius: 4, y: 4)
-            )
+            }
         }
         .buttonStyle(.plain)
         .disabled(isLoading)
@@ -1432,7 +1432,7 @@ private struct ObjectRemovalProcessingView: View {
             .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.background.ignoresSafeArea())
+        .background { AppColors.background.ignoresSafeArea() }
     }
 
     private var header: some View {
@@ -1642,16 +1642,16 @@ private struct AIBackgroundColorSheet: View {
                             Circle()
                                 .fill(Color(hex: hex))
                                 .frame(width: 36, height: 36)
-                                .overlay(
+                                .overlay {
                                     Circle()
                                         .stroke(AppColors.white, lineWidth: selectedHex == hex ? 3 : 0)
-                                )
+                                }
                                 .shadow(color: selectedHex == hex ? AppColors.black.opacity(0.25) : .clear, radius: 0, x: 0, y: 0)
-                                .overlay(
+                                .overlay {
                                     Circle()
                                         .stroke(selectedHex == hex ? AppColors.black.opacity(0.25) : .clear, lineWidth: 3)
                                         .frame(width: 44, height: 44)
-                                )
+                                }
                         }
                         .buttonStyle(.plain)
                     }
@@ -1665,11 +1665,11 @@ private struct AIBackgroundColorSheet: View {
                         .foregroundStyle(AppColors.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 54)
-                        .background(
+                        .background {
                             RoundedRectangle(cornerRadius: 32, style: .continuous)
                                 .fill(AppColors.primaryBlue)
                                 .shadow(color: AppColors.primaryBlue.opacity(0.38), radius: 4, y: 4)
-                        )
+                        }
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, 18)
@@ -1688,10 +1688,10 @@ private struct AIBackgroundColorSheet: View {
                 .padding(.bottom, 10)
             }
             .frame(maxWidth: .infinity)
-            .background(
+            .background {
                 UnevenRoundedRectangle(topLeadingRadius: 32, topTrailingRadius: 32)
                     .fill(AppColors.white)
-            )
+            }
         }
         .ignoresSafeArea()
     }
@@ -1702,20 +1702,20 @@ private struct AIBackgroundColorSheet: View {
 
             RoundedRectangle(cornerRadius: 6, style: .continuous)
                 .fill(Color(hue: hue, saturation: 1, brightness: 1))
-                .overlay(
+                .overlay {
                     LinearGradient(
                         colors: [AppColors.white, AppColors.white.opacity(0)],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
-                )
-                .overlay(
+                }
+                .overlay {
                     LinearGradient(
                         colors: [Color.clear, AppColors.black],
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                )
+                }
                 .overlay(alignment: .topLeading) {
                     Circle()
                         .stroke(AppColors.white, lineWidth: 3)
@@ -1756,7 +1756,7 @@ private struct AIBackgroundColorSheet: View {
                     Circle()
                         .fill(Color(hue: hue, saturation: 1, brightness: 1))
                         .frame(width: 18, height: 18)
-                        .overlay(Circle().stroke(AppColors.white, lineWidth: 3))
+                        .overlay { Circle().stroke(AppColors.white, lineWidth: 3) }
                         .shadow(color: AppColors.black.opacity(0.18), radius: 2, y: 1)
                         .offset(x: max(0, min(width - 18, hue * width - 9)))
                 }
@@ -1788,7 +1788,7 @@ private struct AIBackgroundColorSheet: View {
                     Circle()
                         .fill(Color(hex: selectedHex).opacity(opacity))
                         .frame(width: 18, height: 18)
-                        .overlay(Circle().stroke(AppColors.white, lineWidth: 3))
+                        .overlay { Circle().stroke(AppColors.white, lineWidth: 3) }
                         .shadow(color: AppColors.black.opacity(0.18), radius: 2, y: 1)
                         .offset(x: max(0, min(width - 18, opacity * width - 9)))
                 }
@@ -1829,7 +1829,7 @@ private struct AIBackgroundColorSheet: View {
         .padding(.horizontal, 6)
         .frame(height: 28)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(fieldBackground)
+        .background { fieldBackground }
     }
 
     private var opacityInputField: some View {
@@ -1849,7 +1849,7 @@ private struct AIBackgroundColorSheet: View {
         .padding(.horizontal, 6)
         .frame(height: 28)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(fieldBackground)
+        .background { fieldBackground }
     }
 
     private func colorField(_ text: String) -> some View {
@@ -1861,16 +1861,16 @@ private struct AIBackgroundColorSheet: View {
             .padding(.horizontal, 6)
             .frame(height: 28)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(fieldBackground)
+            .background { fieldBackground }
     }
 
     private var fieldBackground: some View {
         RoundedRectangle(cornerRadius: 4, style: .continuous)
             .fill(AppColors.white)
-            .overlay(
+            .overlay {
                 RoundedRectangle(cornerRadius: 4, style: .continuous)
                     .stroke(Color(hex: "E5E7EB"), lineWidth: 1)
-            )
+            }
             .shadow(color: Color(hex: "1F2937").opacity(0.08), radius: 2, y: 1)
     }
 
@@ -2907,8 +2907,4 @@ private extension UIImage {
         }
         return transparentCount
     }
-}
-
-#Preview {
-    EditorView(image: UIImage(systemName: "photo"), toolKind: .enhanceQuality, onBack: {}, onGoToMenu: {})
 }
