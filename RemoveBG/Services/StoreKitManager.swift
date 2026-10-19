@@ -20,7 +20,7 @@ struct SubscriptionOffer {
 
 @MainActor
 final class StoreKitManager: ObservableObject {
-    static let subscriptionProductID = "annual"
+    static let subscriptionProductID = "weeklybg"
     static let productIDs: Set<String> = [subscriptionProductID]
 
     @Published private(set) var subscriptionProduct: Product?
